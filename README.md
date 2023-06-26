@@ -1,7 +1,13 @@
 ## Instruction for Ubuntu 22.04
-Clone the repo and then run:
+Clone the repo via:
+
 ```
-cd /myproject
+git clone https://github.com/Mahdi171/Unlinkable_PCS.git
+```
+
+And then change your directory to:
+```
+cd Unlinkable_PCS/
 ```
 
 ### Prerequisite Packages:
@@ -16,26 +22,26 @@ Now you can run the test files for any construction of your chose with any arbit
 **Original PCS**
 
 ```
-sudo docker run ulpcs python3 /app/PCS/test.py 2
+sudo docker run ulpcs python3 /app/PCS/test.py 3
 ```
 
 
 **Generic ul-PCS**
 
 ```
-sudo docker run ulpcs python3 /app/Generic/test.py 2
+sudo docker run ulpcs python3 /app/Generic/test.py 3
 ```
 
 
 **RBAC ul-PCS**
 
 ```
-sudo docker run ulpcs python3 /app/RBAC/test.py 10 
+sudo docker run ulpcs python3 /app/RBAC/test.py 5
 ```
 
 
 **ul-PCS with Seperable Policies**
 
 ```
-sudo docker run ulpcs python3 /app/SP/test.py 10
+sudo docker run ulpcs python3 /app/SP/test.py 5
 ```
