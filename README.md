@@ -1,6 +1,6 @@
 # UnLinkable-PCS (ul-PCS)
 
-Policy-compliant signature (PCS) schemes are enhanced signature schemes that enables policy enforcement (a joint predicate on sender and receiver attributes) via signatures while ensuring full privacy of each user's attributes. Unlinkable PCS (ul-PCS) further adds the capability that a user can refresh its public key (without the need to contact a credential issuer) to break any link to their previous actions. 
+Policy-compliant signature (PCS) schemes are enhanced signature schemes that enable policy enforcement (a joint predicate on sender and receiver attributes) via signatures while ensuring full privacy of each user's attributes. Unlinkable PCS (ul-PCS) further adds the capability that a user can refresh its public key (without the need to contact a credential issuer) to break any link to their previous activities. 
 
 This repository contains a prototype, that is, an implementation of PCS (based on policies specified by inner-product relations), and several implementations for ul-PCS (for different policy classes). While a lot of effort has gone into this work, being a prototype means that the code should be used for testing purposes only, and should not be used in a productive environment without further external and professional audits. 
 
