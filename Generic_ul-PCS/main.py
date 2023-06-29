@@ -17,8 +17,7 @@ from Pedersen import GPed
 
 #from HVE import HVE08
 groupObj = PairingGroup('BN254')
-FE = FE(groupObj)
-SEQ = SEQ(groupObj)
+
 class UPCS():
     def __init__(self, groupObj):
         global util, group
@@ -33,7 +32,8 @@ class UPCS():
         self.SPS = SPS(groupObj)
         self.RangeProof = RangeProof()
         self.Com = Com(groupObj)
-        
+        FE.self = FE(groupObj)
+        self.SEQ = SEQ(groupObj)
         self.GPed = GPed(groupObj)
     def matching(self,lst):
         indices_dict = {}
@@ -52,9 +52,9 @@ class UPCS():
         CRS1, tpd1 = NIZK.Transpatent_Setup(self.NIZK,pp)
         CRS2, tpd2 = NIZK.Transpatent_Setup(self.NIZK,pp)
         (sk_sigA,vk_sigA) = SPS.keygen(self.SPS,pp,N+2)
-        (sk_seq,vk_seq) = SEQ.keygen(pp,N+2) #For POK of FE ciphertext 
-        param, gT, g2 = FE.G_IPE( pp,N) #OT12 pre setup
-        mpk_fe, msk_fe = FE.Setup(param,N) #OT12 main setup
+        (sk_seq,vk_seq) = SEQ.keygen(self.SEQ,pp,N+2) #For POK of FE ciphertext 
+        param, gT, g2 = FE.G_IPE(FE.self,pp,N) #OT12 pre setup
+        mpk_fe, msk_fe = FE.Setup(FE.self,param,N) #OT12 main setup
         for i in range(N):
             BB_T[i]=[group.init(G2,1)]*N
         
@@ -76,7 +76,7 @@ class UPCS():
         w_sd = ACC.Add(self.ACC,pp,A_sd,alpha_sd,seed)
         (sk_sig,vk_sig) = DS.keygen(self.DS,pp)
         aux1 = [pp['G1']**seed]; aux1.extend([pp['G1']**val for val in x])
-        sk_fe = FE.KeyGen(mpk['mpk_fe'],msk['msk_fe'],x)
+        sk_fe = FE.KeyGen(FE.self,mpk['mpk_fe'],msk['msk_fe'],x)
         aux2 = [pp['G1']**seed,vk_sig]
         aux3 = [pp['G1']**seed]
         for i in range(len(sk_fe)):
@@ -95,7 +95,7 @@ class UPCS():
         C_sign= [A_sd,pp['G2']]
         for i in range(len(C)):
             C_sign.append(C[i])
-        sigma_FE = SEQ.sign(pp,msk['sk_seq'],C_sign)
+        sigma_FE = SEQ.sign(self.SEQ,pp,msk['sk_seq'],C_sign)
         usk={'seed':seed,'sk_sig':sk_sig,'vk_sig':vk_sig,'sk_fe':sk_fe,
              'sigma_sig1':sigma_sig1,'sigma_sig2':sigma_sig2,'sigma_sig3':sigma_sig3 ,'x':x, 'w_sd':w_sd}
         ct_proof={'C':C, 'C_sign':C_sign, 'sigma_FE':sigma_FE, 'r_C':r_C, 'r_phi':r_Phi, 'phi':phi, 'Phi':Phi}
@@ -178,7 +178,7 @@ class UPCS():
 
             # --> L_1.4.c: SPS-EQ signature generation
         omega = group.random(); Final={};c_x={}; R={}
-        C_P, sigma_P = SEQ.ChgRep(pp,sk[3]['C_sign'],sk[3]['sigma_FE'],omega)
+        C_P, sigma_P = SEQ.ChgRep(self.SEQ,pp,sk[3]['C_sign'],sk[3]['sigma_FE'],omega)
 
         
         for j in range(N):
@@ -310,12 +310,12 @@ class UPCS():
                     result_z = False
         result_CP = [1 for j in range(N) if C_P[j] == pk_R['C_P'][j+2]]
 
-        if FE.Dec(mpk['mpk_fe'], sk[0]['sk_fe'],ct_fe)==mpk['gT'] and \
+        if FE.Dec(FE.self,mpk['mpk_fe'], sk[0]['sk_fe'],ct_fe)==mpk['gT'] and \
         NIZK.Batched_verify(self,pp,mpk['CRS1'],pk_R['pi'],pk_R['comX'],pk_R['comY'],LT1) and \
                 RangeProof.RanVerify(self.RangeProof,V, g, h, gs, hs, u, proof,seeds) and \
                     Sigma.PRFprove.Verify(self.Sigma,pk_R['x_prf'],pk_R['pi_prf']) and \
                         result_fe==[1]*N and result_z==True and result_CP==[1]*N and \
-                            SEQ.verify(pp,mpk['vk_seq'],pk_R['sigma_P'],pk_R['C_P']) and \
+                            SEQ.verify(self.SEQ,pp,mpk['vk_seq'],pk_R['sigma_P'],pk_R['C_P']) and \
                                 Sigma.D_Bridging.Verify(self.Sigma,pk_R['X_Bridge'],pk_R['Pi_Bridge']):
             # --> L2.1: PRF and its proof
             ID_S = PRF.Gen(self.PRF,pp,sk[0]['seed'],sk[1]+1)
@@ -468,9 +468,9 @@ class UPCS():
                         Sigma.PRFprove.Verify(self.Sigma,pk_S['x_prf'],pk_S['pi_prf']) and \
                             Sigma.PRFprove.Verify(self.Sigma,pk_R['x_prf'],pk_R['pi_prf']) and \
                                 result_feR == [1]*N and result_zR and result_CPR==[1]*N and \
-                            SEQ.verify(pp,mpk['vk_seq'],pk_R['sigma_P'],pk_R['C_P']) and \
+                            SEQ.verify(self.SEQ,pp,mpk['vk_seq'],pk_R['sigma_P'],pk_R['C_P']) and \
                                 result_feS == [1]*N and result_zS and result_CPS==[1]*N and \
-                            SEQ.verify(pp,mpk['vk_seq'],pk_S['sigma_P'],pk_S['C_P']) and \
+                            SEQ.verify(self.SEQ,pp,mpk['vk_seq'],pk_S['sigma_P'],pk_S['C_P']) and \
                                 Sigma.D_Bridging.Verify(self.Sigma,pk_R['X_Bridge'],pk_R['Pi_Bridge']) and \
                                     Sigma.D_Bridging.Verify(self.Sigma,pk_S['X_Bridge'],pk_S['Pi_Bridge']):
                                 print("Valid sender's and receiver's public key\n")
@@ -528,9 +528,9 @@ class UPCS():
                         Sigma.PRFprove.Verify(self.Sigma,pk_S['x_prf'],pk_S['pi_prf']) and \
                             Sigma.PRFprove.Verify(self.Sigma,pk_R['x_prf'],pk_R['pi_prf']) and \
                                 result_feR==[1]*N and result_zR and result_CPR==[1]*N and \
-                            SEQ.verify(pp,mpk['vk_seq'],pk_R['sigma_P'],pk_R['C_P']) and \
+                            SEQ.verify(self.SEQ,pp,mpk['vk_seq'],pk_R['sigma_P'],pk_R['C_P']) and \
                                 result_feS==[1]*N and result_zS and result_CPS==[1]*N and \
-                            SEQ.verify(pp,mpk['vk_seq'],pk_S['sigma_P'],pk_S['C_P']) and \
+                            SEQ.verify(self.SEQ,pp,mpk['vk_seq'],pk_S['sigma_P'],pk_S['C_P']) and \
                                 Sigma.D_Bridging.Verify(self.Sigma,pk_R['X_Bridge'],pk_R['Pi_Bridge']) and \
                                     Sigma.D_Bridging.Verify(self.Sigma,pk_S['X_Bridge'],pk_S['Pi_Bridge']):
                                 print("Valid sender's and receiver's public key\n")

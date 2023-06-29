@@ -3,7 +3,7 @@ FROM ubuntu:22.04
 
 # Install system dependencies
 # Install system dependencies
-RUN apt update -y && apt upgrade -y && apt-get install -y sudo && apt-get install -y wget && \
+RUN apt update -y && apt upgrade -y && apt-get install -y sudo && apt-get install -y wget && apt-get install -y nano &&  \
     sudo apt-get install -y git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev libffi-dev && \
     sudo apt-get install -y flex && sudo apt-get install -y bison && sudo apt-get install -y libgmp3-dev && \
     cd /usr/src && \
@@ -40,20 +40,15 @@ RUN pip3 install -r /app/requirements.txt
 
 
 COPY PCS/* /app/PCS/
+RUN mkdir -p /app/PCS/parameters
 RUN cd ..
 COPY Generic_ul-PCS/* /app/Generic/
+RUN mkdir -p /app/Generic/parameters
+RUN touch /app/Generic/Generic.xlsx
 RUN cd ..
 COPY RBAC_ul-PCS/* /app/RBAC/
+RUN mkdir -p /app/RBAC/parameters
 RUN cd ..
 COPY ul-PCS_with_SP/* /app/SP/
+RUN mkdir -p /app/SP/parameters
 RUN cd ..
-
-
-# RUN echo ################ original PCS ################
-# RUN python3 /app/PCS/test.py 2
-# RUN echo ################ Genric ul-PCS ################
-# RUN python3 /app/Generic/test.py 2
-# RUN echo ################ RBAC Ul-PCS ################
-# RUN python3 /app/RBAC/test.py 10
-# RUN echo ################ Ul-PCS with SP ################
-# RUN python3 /app/SP/test.py 10
