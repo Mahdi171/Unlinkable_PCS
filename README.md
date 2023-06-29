@@ -1,6 +1,8 @@
 # UnLinkable-PCS (ul-PCS)
 
-This system enables to enforce a pre-determined policy on signatures while ensuring the unlinkability of signatures (transactions).
+Policy-compliant signature (PCS) schemes are enhanced signature schemes that enables policy enforcement (a joint predicate on sender and receiver attributes) via signatures while ensuring full privacy of each user's attributes. Unlinkable PCS (ul-PCS) further adds the capability that a user can refresh its public key (without the need to contact a credential issuer) to break any link to their previous actions. 
+
+This repository contains a prototype, that is, an implementation of PCS (based on policies specified by inner-product relations), and several implementations for ul-PCS (for different policy classes). While a lot of effort has gone into this work, being a prototype means that the code should be used for testing purposes only, and should not be used in a productive environment without further external and professional audits. 
 
 The structure of this repository is as follows:
 
@@ -73,13 +75,12 @@ cd Unlinkable_PCS/
 ```
 
 ### Prerequisite Packages:
-Install Docker and then run the following command to build the docker container:
+The dependencies and compatibility requirements on various existing libraries to run the prototype are quite involved. We recommend to use Docker to obtain a consistent execution environment. Install Docker and then run the following command to build the docker container:
 
 ```
 sudo docker build -t ulpcs .
 ```
-Now you can run the test files for any construction of your chose with any arbitrary attribute size. 
-Note that you can change "n" to any integer larger than 3.
+To see the prototype in action, you can run the simple test files for any of the four implemented constructions as follows:
 
 **Original PCS**
 
