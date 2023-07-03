@@ -88,6 +88,9 @@ Single test:
 sudo docker run ulpcs python3 /app/PCS/test.py n
 ```
 Full test:
+```
+sudo docker run ulpcs python3 /app/PCS/full_benchmark.py #begin $end #jump #iterations
+```
 
 **Generic ul-PCS**
 Single Test:
@@ -108,10 +111,11 @@ sudo docker ps -a
 Then copy the excel file to the local machine via:
 
 ```
-sudo docker cp eaf21bc37ab7:/Generic.xlsx .
+sudo docker cp #Container_ID:/Generic.xlsx .
 ```
 
 **RBAC ul-PCS**
+Single Test:
 
 ```
 sudo docker run ulpcs python3 /app/RBAC/test.py n
@@ -119,11 +123,16 @@ sudo docker run ulpcs python3 /app/RBAC/test.py n
 Full Test:
 
 ```
-sudo docker run ulpcs python3 /app/RBAC/test.py n
+sudo docker run ulpcs python3 /app/RBAC/full_benchmark.py #begin $end #jump #iterations
 ```
 
 **ul-PCS with Seperable Policies**
+Single Test:
 
 ```
 sudo docker run ulpcs python3 /app/SP/test.py n
+```
+Full test:
+```
+sudo docker run ulpcs python3 /app/SP/full_benchmark.py #begin $end #jump #iterations
 ```
