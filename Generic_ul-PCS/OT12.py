@@ -3,7 +3,6 @@ from charm.toolbox.pairinggroup import PairingGroup,ZR,G1,G2,GT,pair
 from charm.toolbox.secretutil import SecretUtil
 from BG import BG
 from pprint import pprint
-import numpy as np
 from matmath import *
 
 #

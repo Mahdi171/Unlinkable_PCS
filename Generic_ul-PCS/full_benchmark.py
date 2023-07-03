@@ -71,17 +71,17 @@ class Full_benchmark():
         print('IP(x,v)={}'.format(prod))
 
 
-        file = open("/app/Generic/parameters/Genericmsk_{}.txt".format(n_R), "w+") 
+        file = open("app/Generic/parameters/Genericmsk_{}.txt".format(n_R), "w") 
         str = repr(serializeObject(msk,group))
         file.write(str)
         file.close()
-        result.append(os.path.getsize("/app/Generic/parameters/Genericmsk_{}.txt".format(n_R))/1000)
+        result.append(os.path.getsize("app/Generic/parameters/Genericmsk_{}.txt".format(n_R))/1000)
 
-        file = open("/app/Generic/parameters/Genericmpk_{}.txt".format(n_R), "w+") 
+        file = open("app/Generic/parameters/Genericmpk_{}.txt".format(n_R), "w") 
         str = repr(serializeObject(mpk,group))
         file.write(str)
         file.close()
-        result.append(os.path.getsize("/app/Generic/parameters/Genericmpk_{}.txt".format(n_R))/1000)
+        result.append(os.path.getsize("app/Generic/parameters/Genericmpk_{}.txt".format(n_R))/1000)
 
 
         KeyGen_time=0
@@ -95,17 +95,17 @@ class Full_benchmark():
 
         
 
-        file = open("/app/Generic/parameters/Genericsk_{}.txt".format(n_R), "w+") 
+        file = open("app/Generic/parameters/Genericsk_{}.txt".format(n_R), "w") 
         str = repr(sk)
         file.write(str)
         file.close()
-        result.append(os.path.getsize("/app/Generic/parameters/Genericsk_{}.txt".format(n_R))/1000)
+        result.append(os.path.getsize("app/Generic/parameters/Genericsk_{}.txt".format(n_R))/1000)
 
-        file = open("/app/Generic/parameters/Genericpk_{}.txt".format(n_R), "w+") 
+        file = open("app/Generic/parameters/Genericpk_{}.txt".format(n_R), "w") 
         str = repr(pk)
         file.write(str)
         file.close()
-        result.append(os.path.getsize("/app/Generic/parameters/Genericpk_{}.txt".format(n_R))/1000)
+        result.append(os.path.getsize("app/Generic/parameters/Genericpk_{}.txt".format(n_R))/1000)
 
 
         sk_R={};pk_R={}
@@ -133,10 +133,10 @@ class Full_benchmark():
         result.append(Sign_time/iter)
 
 
-        file = open("/app/Generic/parameters/GenericSig_{}.txt".format(n_R), "w+")
+        file = open("app/Generic/parameters/GenericSig_{}.txt".format(n_R), "w")
         file.write(repr(sigma))
         file.close()
-        result.append(os.path.getsize("/app/Generic/parameters/GenericSig_{}.txt".format(n_R))/1000)
+        result.append(os.path.getsize("app/Generic/parameters/GenericSig_{}.txt".format(n_R))/1000)
         
 
         # Verification time
@@ -173,4 +173,4 @@ Full_benchmark=Full_benchmark(groupObj)
 for n_R in range(int(sys.argv[1]),int(sys.argv[2])+1,int(sys.argv[3])): #Use can change this range
     data.append(Full_benchmark.main(n_R,4*n_R+2,int(sys.argv[4])))
     print(n_R,"\n")
-book.save("/app/Generic.xlsx")
+book.save("Generic.xlsx")

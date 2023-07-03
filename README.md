@@ -83,25 +83,44 @@ sudo docker build -t ulpcs .
 To see the prototype in action, you can run the simple test files for any of the four implemented constructions as follows:
 
 **Original PCS**
-
+Single test:
 ```
 sudo docker run ulpcs python3 /app/PCS/test.py n
 ```
-
+Full test:
 
 **Generic ul-PCS**
+Single Test:
 
 ```
 sudo docker run ulpcs python3 /app/Generic/test.py n
 ```
+Full Test:
 
+```
+sudo docker run ulpcs python3 /app/Generic/full_benchmark.py #begin $end #jump #iterations
+```
+Once the above command is run then fisrt find the container ID via:
+
+```
+sudo docker ps -a
+```
+Then copy the excel file to the local machine via:
+
+```
+sudo docker cp eaf21bc37ab7:/Generic.xlsx .
+```
 
 **RBAC ul-PCS**
 
 ```
 sudo docker run ulpcs python3 /app/RBAC/test.py n
 ```
+Full Test:
 
+```
+sudo docker run ulpcs python3 /app/RBAC/test.py n
+```
 
 **ul-PCS with Seperable Policies**
 
