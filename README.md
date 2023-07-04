@@ -103,16 +103,6 @@ Full Test:
 ```
 sudo docker run ulpcs python3 /app/Generic/full_benchmark.py #begin $end #jump #iterations
 ```
-Once the above command is run then fisrt find the container ID via:
-
-```
-sudo docker ps -a
-```
-Then copy the excel file to the local machine via:
-
-```
-sudo docker cp #Container_ID:/Generic.xlsx .
-```
 
 **RBAC ul-PCS**
 Single Test:
@@ -135,4 +125,15 @@ sudo docker run ulpcs python3 /app/SP/test.py n
 Full test:
 ```
 sudo docker run ulpcs python3 /app/SP/full_benchmark.py #begin $end #jump #iterations
+```
+
+Once any full test is run, the exel file with the statistics can be retrieved. For example, first find the container ID via:
+
+```
+sudo docker ps -a
+```
+Then copy the excel file to the local machine, for example via:
+
+```
+sudo docker cp #Container_ID:/Generic.xlsx .
 ```
