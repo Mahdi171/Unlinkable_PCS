@@ -52,16 +52,6 @@ class Full_benchmark():
         group = groupObj    
     def main(self,n,N,iter):
         result=[N,n]
-        #CA Key Gen
-        setup_time=0
-        #F=F_lambda.maker(n_R)
-        for i in range(iter):
-            start_bench(groupObj)
-            (msk, mpk) = UPCS.Setup(N)
-            setup_time1, setup_pair= end_bench(groupObj)
-            setup_time += setup_time1
-        result.append(setup_time/iter)
-
         v = [group.random(ZR) for _ in range(n-1)]
         x = [group.random(ZR) for _ in range(n-1)]
         p = group.order()
@@ -69,6 +59,16 @@ class Full_benchmark():
         x.append(1)
         prod = np.sum([x * y for x, y in zip(v, x)]) 
         print('IP(x,v)={}'.format(prod))
+        #CA Key Gen
+        setup_time=0
+        for i in range(iter):
+            start_bench(groupObj)
+            (msk, mpk) = UPCS.Setup(N,x,v)
+            setup_time1, setup_pair= end_bench(groupObj)
+            setup_time += setup_time1
+        result.append(setup_time/iter)
+
+        
 
 
         file = open("app/Generic/parameters/Genericmsk_{}.txt".format(n_R), "w") 
@@ -127,7 +127,7 @@ class Full_benchmark():
         Sign_time=0
         for i in range(iter):
             start_bench(groupObj)
-            (sigma,LT2) = UPCS.Sign(mpk,sk[1],pk_R[0],m,LT1)
+            (sigma,LT2) = UPCS.Sign(mpk,sk[1],pk_R[0],m)
             Sign_time1, Sign_pair= end_bench(groupObj)
             Sign_time += Sign_time1
         result.append(Sign_time/iter)
@@ -143,7 +143,7 @@ class Full_benchmark():
         Verify_time=0
         for i in range(iter):
             start_bench(groupObj)
-            out = UPCS.verify(mpk,pk[1],pk_R[0],m,sigma,LT1,LT2)
+            out = UPCS.verify(mpk,pk[1],pk_R[0],m,sigma)
             print(out)
             Verify_time1, Verify_pair = end_bench(groupObj)
             Verify_time += Verify_time1
@@ -154,7 +154,7 @@ class Full_benchmark():
         Batched_Verify_time=0
         for i in range(iter):
             start_bench(groupObj)
-            out = UPCS.Batched_verify(mpk,pk[1],pk_R[0],m,sigma,LT1,LT2)
+            out = UPCS.Batched_verify(mpk,pk[1],pk_R[0],m,sigma)
             print(out)
             v_time, Batched_verify_pair = end_bench(groupObj)
             Batched_Verify_time += v_time

@@ -34,7 +34,7 @@ def main(N,x,v):
     To Setup the master secret key and master public key
     '''
     t=time.time()
-    (msk, mpk) = UPCS.Setup(N)
+    (msk, mpk) = UPCS.Setup(N,x,v)
     print("The setup for {} attributes/roles took {:0.4f} seconds".format(int((N-2)/4),time.time()-t))
 
 
@@ -71,18 +71,18 @@ def main(N,x,v):
     '''
     m = groupObj.random()
     t=time.time()
-    (sigma, LT2) = UPCS.Sign(mpk,sk_S[1],pk_R[1],m,LT1)
+    (sigma, LT2) = UPCS.Sign(mpk,sk_S[1],pk_R[1],m)
     print("The signing for {} attributes/roles took {:0.4f} seconds".format(int((N-2)/4),time.time()-t))
 
     t=time.time()
-    out = UPCS.verify(mpk,pk_S[1],pk_R[1],m,sigma, LT1,LT2)
+    out = UPCS.verify(mpk,pk_S[1],pk_R[1],m,sigma)
     print("The verification for {} attributes/roles took {:0.4f} seconds".format(int((N-2)/4),time.time()-t))
 
     '''
     To verify the signature on message m under the public key pk and pk_R
     '''
     t=time.time()
-    out = UPCS.Batched_verify(mpk,pk_S[1],pk_R[1],m,sigma,LT1,LT2)
+    out = UPCS.Batched_verify(mpk,pk_S[1],pk_R[1],m,sigma)
     print("The batched verification for {} attributes/roles took {:0.4f} seconds".format(int((N-2)/4),time.time()-t))
 
     if out==True:

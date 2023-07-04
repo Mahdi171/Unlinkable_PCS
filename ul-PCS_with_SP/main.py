@@ -38,7 +38,7 @@ class UPCS():
         # Filter the dictionary to include only elements with multiple occurrences
         repeated_elements = [indices for element, indices in indices_dict.items() if len(indices) > 1]
         return repeated_elements                     
-    def Setup(self):
+    def Setup(self,F,x,v):
         Gamma1={}; Gamma2={}
         pp = BG.Gen(self)
         CRS1, tpd1 = NIZK.Transpatent_Setup(self,pp)
@@ -50,6 +50,11 @@ class UPCS():
         msk={'sk_sigAS':sk_sigAS, 'sk_sigAR':sk_sigAR, 'dk_encA': dk_encA}
         mpk={'pp':pp, 'CRS1':CRS1, 'CRS2':CRS2, 'vk_sigAS':vk_sigAS,\
               'vk_sigAR':vk_sigAR, 'ek_encA':ek_encA, 'pp_com':pp_com}
+        sk,pk,LT1 = UPCS.KeyGen(self,mpk,msk,x,F)
+        sk_R,pk_R,LT1 = UPCS.KeyGen(self,mpk,msk,v,F)
+        mpk['LT1'] = LT1
+        sigma, LT2 = UPCS.Sign(self,mpk,sk,pk_R,groupObj.random())
+        mpk['LT2'] = LT2
         return (msk, mpk)
 
     def KeyGen(self,mpk,msk,x,F):
@@ -203,7 +208,7 @@ class UPCS():
         return sk, pk, LT1
 
 
-    def Sign(self,mpk,sk,pk_R,m,LT1):
+    def Sign(self,mpk,sk,pk_R,m):
         pp = mpk['pp']; pp_com = mpk['pp_com'];
         (V, g, h, gs, hs, u, proof,seeds) = pk_R['rp']; X = sk[1]+1
         GS_proof = {}; GS_comX = {}; GS_comY = {}; res_Bridge=[]
@@ -211,7 +216,7 @@ class UPCS():
         X_Bridge = {}; Pi_Bridge = {}
 
         if 'dk_encA' in sk[0].keys() and \
-            NIZK.Batched_verify(self.NIZK,pp,mpk['CRS1'],pk_R['pi'],pk_R['comX'],pk_R['comY'],LT1) and \
+            NIZK.Batched_verify(self.NIZK,pp,mpk['CRS1'],pk_R['pi'],pk_R['comX'],pk_R['comY'],mpk['LT1']) and \
             ENC.Dec(self,sk[0]['dk_encA'],pk_R['ct'])==pp['G1']**group.init(ZR, 1) and \
             RangeProof.RanVerify(self.RangeProof ,V, g, h, gs, hs, u, proof,seeds)==True and \
             Sigma.PRFprove.Verify(self.Sigma,pk_R['x_prf'],pk_R['pi_prf'])==1 and \
@@ -292,28 +297,28 @@ class UPCS():
             sigma="perp"; pi="perp"; LT2="perp"
         return {'sigma':sigma,'pi':pi}, LT2
 
-    def verify(self,mpk,pk_S,pk_R,m,sigma,LT1,LT2):
+    def verify(self,mpk,pk_S,pk_R,m,sigma):
         pi_s = sigma['pi']; pp = mpk['pp']
-        if NIZK.verify(self.NIZK,pp,mpk['CRS1'],pk_R['pi'],pk_R['comX'],pk_R['comY'],LT1) and \
-                NIZK.verify(self.NIZK,pp,mpk['CRS1'],pk_S['pi'],pk_S['comX'],pk_S['comY'],LT1) and \
+        if NIZK.verify(self.NIZK,pp,mpk['CRS1'],pk_R['pi'],pk_R['comX'],pk_R['comY'],mpk['LT1']) and \
+                NIZK.verify(self.NIZK,pp,mpk['CRS1'],pk_S['pi'],pk_S['comX'],pk_S['comY'],mpk['LT1']) and \
                 Sigma.Dlog.Verify(self.Sigma,pi_s['x_dk'],pi_s['pi_dk']) and \
                     Sigma.D_Bridging.Verify(self.Sigma,pk_R['X_Bridge'],pk_R['Pi_Bridge']) and \
                         Sigma.D_Bridging.Verify(self.Sigma,pk_S['X_Bridge'],pk_S['Pi_Bridge']):
             print("Valid sender's and receiver's public key\n")
             return DS.verify(self,mpk['pp'],pk_S['vk_sig'],sigma['sigma'],[m,pk_R['ID']]) and \
-                NIZK.verify(self.NIZK,pp,mpk['CRS2'],pi_s['pi'],pi_s['comX'],pi_s['comY'],LT2) and \
+                NIZK.verify(self.NIZK,pp,mpk['CRS2'],pi_s['pi'],pi_s['comX'],pi_s['comY'],mpk['LT2']) and \
                 Sigma.PRFprove.Verify(self.Sigma,pk_R['x_prf'],pk_R['pi_prf']) and \
                 Sigma.D_Bridging.Verify(self.Sigma,pi_s['X_Bridge'],pi_s['Pi_Bridge'])
     
-    def Batched_verify(self,mpk,pk_S,pk_R,m,sigma,LT1,LT2):
+    def Batched_verify(self,mpk,pk_S,pk_R,m,sigma):
         pi_s = sigma['pi']; pp = mpk['pp']
-        if NIZK.Batched_verify(self.NIZK,pp,mpk['CRS1'],pk_R['pi'],pk_R['comX'],pk_R['comY'],LT1)  and \
-                NIZK.Batched_verify(self.NIZK,pp,mpk['CRS1'],pk_S['pi'],pk_S['comX'],pk_S['comY'],LT1)  and \
+        if NIZK.Batched_verify(self.NIZK,pp,mpk['CRS1'],pk_R['pi'],pk_R['comX'],pk_R['comY'],mpk['LT1'])  and \
+                NIZK.Batched_verify(self.NIZK,pp,mpk['CRS1'],pk_S['pi'],pk_S['comX'],pk_S['comY'],mpk['LT1'])  and \
                 Sigma.Dlog.Verify(self.Sigma,pi_s['x_dk'],pi_s['pi_dk']) and \
                 Sigma.D_Bridging.Verify(self.Sigma,pk_R['X_Bridge'],pk_R['Pi_Bridge']) and \
                         Sigma.D_Bridging.Verify(self.Sigma,pk_S['X_Bridge'],pk_S['Pi_Bridge']):
             print("Valid sender's and receiver's public key\n")
             return DS.verify(self,mpk['pp'],pk_S['vk_sig'],sigma['sigma'],[m,pk_R['ID']]) and \
-                NIZK.Batched_verify(self.NIZK,pp,mpk['CRS2'],pi_s['pi'],pi_s['comX'],pi_s['comY'],LT2) and \
+                NIZK.Batched_verify(self.NIZK,pp,mpk['CRS2'],pi_s['pi'],pi_s['comX'],pi_s['comY'],mpk['LT2']) and \
                 Sigma.PRFprove.Verify(self.Sigma, pk_R['x_prf'],pk_R['pi_prf']) and \
                 Sigma.D_Bridging.Verify(self.Sigma,pi_s['X_Bridge'],pi_s['Pi_Bridge'])

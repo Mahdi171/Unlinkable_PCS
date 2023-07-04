@@ -21,7 +21,7 @@ def main(N,x,v):
     To Setup the master secret key and master public key
     '''
     t=time.time()
-    (msk, mpk) = PCS.Setup(N)
+    (msk, mpk) = PCS.Setup(N,x,v)
     print("The setup for {} attributes/roles took {:0.4f} seconds".format(int((N-2)/4),time.time()-t))
 
 
@@ -51,11 +51,11 @@ def main(N,x,v):
     To verify the signature on message m under the public key pk and pk_R
     '''
     t = time.time()
-    out = PCS.verify(mpk,pk_S,pk_R,m,sigma,LT)
+    out = PCS.verify(mpk,pk_S,pk_R,m,sigma)
     print("The verification for {} attributes/roles took {:0.4f} seconds".format(int((N-2)/4),time.time()-t))
 
     t = time.time()
-    out = PCS.Batched_verify(mpk,pk_S,pk_R,m,sigma,LT)
+    out = PCS.Batched_verify(mpk,pk_S,pk_R,m,sigma)
     print("The Batched verification for {} attributes/roles took {:0.4f} seconds".format(int((N-2)/4),time.time()-t))
 
     if out==True:

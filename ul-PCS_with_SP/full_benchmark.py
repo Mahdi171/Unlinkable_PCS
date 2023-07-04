@@ -48,13 +48,15 @@ class Full_benchmark():
         group = groupObj    
     def main(self,n_R,iter):
         result=[n_R]   
+        x=3 # the sender i=2, any role in range [1,n_R]
+        y=2 # the receiver j=1.
         #CA Key Gen
         setup_time=0
         F=Policy.maker(self,n_R)
         F['R'][3]=1; F['R'][2]=1; F['S'][3]=1; F['S'][2]=1
         for i in range(iter):
             start_bench(groupObj)
-            (msk, mpk) = UPCS.Setup()
+            (msk, mpk) = UPCS.Setup(F,x,y)
             setup_time1, setup_pair= end_bench(groupObj)
             setup_time += setup_time1
         result.append(setup_time/iter)
@@ -74,8 +76,7 @@ class Full_benchmark():
 
 
         # KeyGen algorithm
-        x=3 # the sender i=2, any role in range [1,n_R]
-        y=2 # the receiver j=1.
+        
 
         KeyGen_time=0
         for i in range(iter):
@@ -118,7 +119,7 @@ class Full_benchmark():
         Sign_time=0
         for i in range(iter):
             start_bench(groupObj)
-            sigma,LT2 = UPCS.Sign(mpk,sk[1],pk_R[0],m,LT1)
+            sigma,LT2 = UPCS.Sign(mpk,sk[1],pk_R[0],m)
             Sign_time1, Sign_pair= end_bench(groupObj)
             Sign_time += Sign_time1
         result.append(Sign_time/iter)
@@ -133,7 +134,7 @@ class Full_benchmark():
         Verify_time = 0
         for i in range(iter):
             start_bench(groupObj)
-            out = UPCS.verify(mpk,pk[1],pk_R[0],m,sigma,LT1,LT2)
+            out = UPCS.verify(mpk,pk[1],pk_R[0],m,sigma)
             Verify_time1, verify_pair = end_bench(groupObj)
             Verify_time += Verify_time1
         result.append(Verify_time/iter)
@@ -144,7 +145,7 @@ class Full_benchmark():
         Batched_Verify_time=0
         for i in range(iter):
             start_bench(groupObj)
-            out = UPCS.Batched_verify(mpk,pk[1],pk_R[0],m,sigma,LT1,LT2)
+            out = UPCS.Batched_verify(mpk,pk[1],pk_R[0],m,sigma)
             print("Signature is ",out)
             Batched_Verify_time1, Batched_pair = end_bench(groupObj)
             Batched_Verify_time += Batched_Verify_time1

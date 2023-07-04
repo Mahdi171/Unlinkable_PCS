@@ -29,7 +29,7 @@ class PCS():
         # Filter the dictionary to include only elements with multiple occurrences
         repeated_elements = [indices for element, indices in indices_dict.items() if len(indices) > 1]
         return repeated_elements     
-    def Setup(self,N):
+    def Setup(self,N,x,v):
         pp = BG.Gen(self.BG)
         CRS, tpd = NIZK.Transpatent_Setup(self.NIZK,pp)
         param, gT, g2 = FE.G_IPE(self.FE,pp,N) #OT12 pre setup
@@ -39,6 +39,10 @@ class PCS():
         msk={'msk_fe': msk_fe, 'sk_pub':sk_pub,'sk_priv':sk_priv}
         mpk={'pp':pp, 'CRS':CRS, 'vk_pub':vk_pub,'vk_priv':vk_priv, 'mpk_fe':mpk_fe,\
              'g2':g2, 'gT':gT, 'N':N}
+        sk,pk = PCS.KeyGen(self,mpk,msk,x)
+        sk_R,pk_R = PCS.KeyGen(self,mpk,msk,v)
+        sigma, LT = PCS.Sign(self,mpk,sk,pk_R,groupObj.random())
+        mpk['LT'] = LT
         return (msk, mpk)
 
     def KeyGen(self,mpk,msk,x):
@@ -144,18 +148,18 @@ class PCS():
             sigma="perp"; pi="perp"
         return {'sigma':sigma,'pi':pi}, LT
 
-    def verify(self,mpk,pk_S,pk_R,M,sigma,LT):
+    def verify(self,mpk,pk_S,pk_R,M,sigma):
         pp = mpk['pp']
         pi_s = sigma['pi']
         return DS.verify(self.DS, pp,pk_S['vk_P'],sigma['sigma'],[M,pk_R['vk_P']]) and \
         DS.verify(self.DS,pp,mpk['vk_pub'],pk_S['sigma_pub'],[pk_S['vk_P'],pk_S['ct']]) and \
         DS.verify(self.DS,pp,mpk['vk_pub'],pk_R['sigma_pub'],[pk_R['vk_P'],pk_R['ct']]) and \
-            NIZK.verify(self.NIZK,pp,mpk['CRS'],pi_s['pi'],pi_s['comX'],pi_s['comY'],LT)
+            NIZK.verify(self.NIZK,pp,mpk['CRS'],pi_s['pi'],pi_s['comX'],pi_s['comY'],mpk['LT'])
                 
-    def Batched_verify(self,mpk,pk_S,pk_R,M,sigma,LT):
+    def Batched_verify(self,mpk,pk_S,pk_R,M,sigma):
         pp = mpk['pp']
         pi_s = sigma['pi']
         return DS.verify(self.DS, pp,pk_S['vk_P'],sigma['sigma'],[M,pk_R['vk_P']]) and \
         DS.verify(self.DS,pp,mpk['vk_pub'],pk_S['sigma_pub'],[pk_S['vk_P'],pk_S['ct']]) and \
         DS.verify(self.DS,pp,mpk['vk_pub'],pk_R['sigma_pub'],[pk_R['vk_P'],pk_R['ct']]) and \
-            NIZK.Batched_verify(self.NIZK,pp,mpk['CRS'],pi_s['pi'],pi_s['comX'],pi_s['comY'], LT)
+            NIZK.Batched_verify(self.NIZK,pp,mpk['CRS'],pi_s['pi'],pi_s['comX'],pi_s['comY'], mpk['LT'])

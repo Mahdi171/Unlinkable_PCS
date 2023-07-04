@@ -50,7 +50,7 @@ class Full_benchmark():
         setup_time=0
         for _ in range(iter):
             start_bench(groupObj)
-            (msk, mpk) = PCS.Setup(N)
+            (msk, mpk) = PCS.Setup(N,x,v)
             setup_time1, setup_pair= end_bench(groupObj)
             setup_time += setup_time1
         result.append(setup_time/iter)
@@ -117,7 +117,7 @@ class Full_benchmark():
         Verify_time=0
         for i in range(iter):
             start_bench(groupObj)
-            out = PCS.verify(mpk,pk,pk_R,m,sigma,LT)
+            out = PCS.verify(mpk,pk,pk_R,m,sigma)
             print("Non_Batched", out)
             Verify_time1, Verify_pair = end_bench(groupObj)
             Verify_time += Verify_time1
@@ -128,7 +128,7 @@ class Full_benchmark():
         Batched_Verify_time=0
         for i in range(iter):
             start_bench(groupObj)
-            out = PCS.Batched_verify(mpk,pk,pk_R,m,sigma,LT)
+            out = PCS.Batched_verify(mpk,pk,pk_R,m,sigma)
             print("Bathced", out)
             v_time, Batched_verify_pair = end_bench(groupObj)
             Batched_Verify_time += v_time
