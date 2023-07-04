@@ -90,7 +90,7 @@ Single test:
 ```
 sudo docker run ulpcs python3 /app/PCS/test.py n
 ```
-Full test:
+Full test*:
 ```
 sudo docker run ulpcs python3 /app/PCS/full_benchmark.py #begin $end #jump #iterations
 ```
@@ -101,7 +101,7 @@ Single Test:
 ```
 sudo docker run ulpcs python3 /app/Generic/test.py n
 ```
-Full Test:
+Full Test*:
 
 ```
 sudo docker run ulpcs python3 /app/Generic/full_benchmark.py #begin $end #jump #iterations
@@ -113,7 +113,7 @@ Single Test:
 ```
 sudo docker run ulpcs python3 /app/RBAC/test.py n
 ```
-Full Test:
+Full Test*:
 
 ```
 sudo docker run ulpcs python3 /app/RBAC/full_benchmark.py #begin $end #jump #iterations
@@ -125,12 +125,12 @@ Single Test:
 ```
 sudo docker run ulpcs python3 /app/SP/test.py n
 ```
-Full test:
+Full test*:
 ```
 sudo docker run ulpcs python3 /app/SP/full_benchmark.py #begin $end #jump #iterations
 ```
 
-Once any full test is run, the xlsx-file with the statistics can be retrieved. For example, first find the container ID via:
+*Once any full test is run, the xlsx-file with the statistics can be retrieved. For example, first find the container ID via:
 
 ```
 sudo docker ps -a
