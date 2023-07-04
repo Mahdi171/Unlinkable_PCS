@@ -130,12 +130,12 @@ Full test:
 sudo docker run ulpcs python3 /app/SP/full_benchmark.py #begin $end #jump #iterations
 ```
 
-Once any full test is run, the exel file with the statistics can be retrieved. For example, first find the container ID via:
+Once any full test is run, the xlsx-file with the statistics can be retrieved. For example, first find the container ID via:
 
 ```
 sudo docker ps -a
 ```
-Then copy the excel file to the local machine, for example via:
+Then copy the respective xlsx-file to the local machine, for example:
 
 ```
 sudo docker cp #Container_ID:/Generic.xlsx .
