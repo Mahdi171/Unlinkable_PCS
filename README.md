@@ -75,11 +75,14 @@ cd Unlinkable_PCS/
 ```
 
 ### Prerequisite Packages:
-The dependencies and compatibility requirements on various existing libraries to run the prototype are quite involved. We recommend to use Docker to obtain a consistent execution environment. Install Docker and then run the following command to build the docker container:
+The dependencies and compatibility requirements on various existing libraries to run the prototype are quite involved. We recommend to use Docker to obtain a consistent execution environment (though the runtimes might be slower compared to a direct execution). Install Docker and then run the following command to build the docker container:
 
 ```
 sudo docker build -t ulpcs .
 ```
+
+### Testing the Prototype:
+
 To see the prototype in action, you can run the simple test files for any of the four implemented constructions as follows:
 
 **Original PCS**
