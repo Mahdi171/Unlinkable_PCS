@@ -14,7 +14,7 @@ from Sigma import Sigma
 from Bulletproof import RangeProof
 from Acc import ACC
 from Pedersen import GPed
-
+import numpy as np
 #from HVE import HVE08
 groupObj = PairingGroup('BN254')
 
@@ -46,7 +46,7 @@ class UPCS():
         repeated_elements = [indices for element, indices in indices_dict.items() if len(indices) > 1]
         return repeated_elements
     def Setup(self,N,x,v):
-        BB_T={}; ck={}
+        BB_T={}; ck={}; n = int((N-2)/4)
         pp = BG.Gen(self.BG); h=group.random(G2)
         pp_com = Com.Setup(self.Com) # Can we do the setup in the GS file?
         CRS1, tpd1 = NIZK.Transpatent_Setup(self.NIZK,pp)
@@ -65,6 +65,7 @@ class UPCS():
         msk={'sk_sigA':sk_sigA, 'msk_fe': msk_fe, 'sk_seq':sk_seq}
         mpk={'pp':pp, 'pp_com':pp_com, 'CRS1':CRS1, 'CRS2':CRS2, 'vk_sigA':vk_sigA,\
              'vk_seq':vk_seq, 'mpk_fe':mpk_fe, 'gT':gT, 'N':N, 'ck':ck, 'h':h, 'g2': g2}
+        
         sk,pk,LT1 = UPCS.KeyGen(self,mpk,msk,x)
         sk_R,pk_R,LT1 = UPCS.KeyGen(self,mpk,msk,v)
         mpk['LT1'] = LT1

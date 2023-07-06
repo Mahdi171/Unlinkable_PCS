@@ -34,7 +34,7 @@ def main(N,x,v):
     To Setup the master secret key and master public key
     '''
     t=time.time()
-    (msk, mpk) = UPCS.Setup(N,x,v)
+    (msk, mpk) = UPCS.Setup(N)
     print("The setup for {} attributes/roles took {:0.4f} seconds".format(int((N-2)/4),time.time()-t))
 
 

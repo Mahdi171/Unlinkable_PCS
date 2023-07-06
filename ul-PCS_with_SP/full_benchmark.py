@@ -56,7 +56,7 @@ class Full_benchmark():
         F['R'][3]=1; F['R'][2]=1; F['S'][3]=1; F['S'][2]=1
         for i in range(iter):
             start_bench(groupObj)
-            (msk, mpk) = UPCS.Setup(F,x,y)
+            (msk, mpk) = UPCS.Setup(F)
             setup_time1, setup_pair= end_bench(groupObj)
             setup_time += setup_time1
         result.append(setup_time/iter)

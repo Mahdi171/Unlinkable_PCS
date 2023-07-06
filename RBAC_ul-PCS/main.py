@@ -38,8 +38,8 @@ class UPCS():
             # Filter the dictionary to include only elements with multiple occurrences
             repeated_elements = [indices for element, indices in indices_dict.items() if len(indices) > 1]
             return repeated_elements              
-    def Setup(self,F,x,v):
-        A = {}; alpha={}; W={}; Gamma1={}; Gamma2={}
+    def Setup(self,F):
+        A = {}; alpha={}; W={}
         pp = BG.Gen(self)
         CRS1, tpd1 = NIZK.Transpatent_Setup(self,pp)
         CRS2, tpd2 = NIZK.Transpatent_Setup(self,pp)
@@ -49,18 +49,23 @@ class UPCS():
         for y in range(len(F)):
             S={}
             (A[y],alpha[y]) = ACC.Create(self,pp)
-            S[y]=[x for x in range(len(F)) if F[x,y]==1 and x!=y]
+            S[y]=[x for x in range(len(F)) if F[x,y]==1]
             for i in S[y]:
                 w_i = ACC.Add(self,pp,A[y],alpha[y],i)
                 W[y,i] = w_i
         msk={'sk_sigA':sk_sigA, 'sk_seqA':sk_seqA, 'A': A, 'W':W}
         mpk={'pp':pp, 'CRS1':CRS1, 'CRS2':CRS2, 'vk_sigA':vk_sigA,\
               'vk_seqA':vk_seqA, 'pp_com':pp_com}
-        sk,pk,LT1 = UPCS.KeyGen(self,mpk,msk,x)
-        sk_R,pk_R,LT1 = UPCS.KeyGen(self,mpk,msk,v)
-        mpk['LT1'] = LT1
-        sigma, LT2 = UPCS.Sign(self,mpk,sk,pk_R,groupObj.random(),x)
-        mpk['LT2'] = LT2
+        x,v=0,0
+        while True:
+            if F[x,v]:
+                sk,pk,LT1 = UPCS.KeyGen(self,mpk,msk,x)
+                sk_R,pk_R,LT1 = UPCS.KeyGen(self,mpk,msk,v)
+                mpk['LT1'] = LT1
+                sigma, LT2 = UPCS.Sign(self,mpk,sk,pk_R,groupObj.random(),x)
+                mpk['LT2'] = LT2
+                break
+            x+=1;v+=1
         return (msk, mpk)
 
     def KeyGen(self,mpk,msk,x):

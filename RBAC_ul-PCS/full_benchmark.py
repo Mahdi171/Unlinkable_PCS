@@ -60,7 +60,7 @@ class Full_benchmark():
         F[1,2]=1; F[2,1]=1 #to make sure receiver j=3 and sender i=3 are allowed to have a link
         for i in range(iter):
             start_bench(groupObj)
-            (msk, mpk) = UPCS.Setup(F,x,y)
+            (msk, mpk) = UPCS.Setup(F)
             setup_time1, setup_pair= end_bench(groupObj)
             setup_time += setup_time1
         result.append(setup_time/iter)

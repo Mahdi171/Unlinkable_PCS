@@ -38,7 +38,7 @@ class UPCS():
         # Filter the dictionary to include only elements with multiple occurrences
         repeated_elements = [indices for element, indices in indices_dict.items() if len(indices) > 1]
         return repeated_elements                     
-    def Setup(self,F,x,v):
+    def Setup(self,F):
         Gamma1={}; Gamma2={}
         pp = BG.Gen(self)
         CRS1, tpd1 = NIZK.Transpatent_Setup(self,pp)
@@ -50,11 +50,16 @@ class UPCS():
         msk={'sk_sigAS':sk_sigAS, 'sk_sigAR':sk_sigAR, 'dk_encA': dk_encA}
         mpk={'pp':pp, 'CRS1':CRS1, 'CRS2':CRS2, 'vk_sigAS':vk_sigAS,\
               'vk_sigAR':vk_sigAR, 'ek_encA':ek_encA, 'pp_com':pp_com}
-        sk,pk,LT1 = UPCS.KeyGen(self,mpk,msk,x,F)
-        sk_R,pk_R,LT1 = UPCS.KeyGen(self,mpk,msk,v,F)
-        mpk['LT1'] = LT1
-        sigma, LT2 = UPCS.Sign(self,mpk,sk,pk_R,groupObj.random())
-        mpk['LT2'] = LT2
+        x,v=0,0
+        while True:
+            if F['R'][x] and F['S'][v]:
+                sk,pk,LT1 = UPCS.KeyGen(self,mpk,msk,x,F)
+                sk_R,pk_R,LT1 = UPCS.KeyGen(self,mpk,msk,v,F)
+                mpk['LT1'] = LT1
+                sigma, LT2 = UPCS.Sign(self,mpk,sk,pk_R,groupObj.random())
+                mpk['LT2'] = LT2
+                break
+            x+=1;v+=1
         return (msk, mpk)
 
     def KeyGen(self,mpk,msk,x,F):
