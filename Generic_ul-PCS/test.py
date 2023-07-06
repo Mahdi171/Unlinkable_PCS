@@ -102,7 +102,7 @@ x=[groupObj.random() for _ in range(n-1)]
 p=groupObj.order()
 v.append(p-(np.sum([x * y for x, y in zip(v, x)])))
 x.append(1)
-prod = np.sum([x * y for x, y in zip(v, x)]) 
+prod = np.sum([x * y for x, y in zip(v, x)])
 print('IP(x,v)={}'.format(prod))
 
 

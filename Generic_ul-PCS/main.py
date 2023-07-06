@@ -45,7 +45,7 @@ class UPCS():
         # Filter the dictionary to include only elements with multiple occurrences
         repeated_elements = [indices for element, indices in indices_dict.items() if len(indices) > 1]
         return repeated_elements
-    def Setup(self,N,x,v):
+    def Setup(self,N):
         BB_T={}; ck={}; n = int((N-2)/4)
         pp = BG.Gen(self.BG); h=group.random(G2)
         pp_com = Com.Setup(self.Com) # Can we do the setup in the GS file?
@@ -65,12 +65,19 @@ class UPCS():
         msk={'sk_sigA':sk_sigA, 'msk_fe': msk_fe, 'sk_seq':sk_seq}
         mpk={'pp':pp, 'pp_com':pp_com, 'CRS1':CRS1, 'CRS2':CRS2, 'vk_sigA':vk_sigA,\
              'vk_seq':vk_seq, 'mpk_fe':mpk_fe, 'gT':gT, 'N':N, 'ck':ck, 'h':h, 'g2': g2}
-        
-        sk,pk,LT1 = UPCS.KeyGen(self,mpk,msk,x)
-        sk_R,pk_R,LT1 = UPCS.KeyGen(self,mpk,msk,v)
-        mpk['LT1'] = LT1
-        sigma, LT2 = UPCS.Sign(self,mpk,sk,pk_R,groupObj.random())
-        mpk['LT2'] = LT2
+        while True:
+            v=[group.random() for _ in range(n-1)]
+            x=[group.random() for _ in range(n-1)]
+            p=group.order()
+            v.append(p-(np.sum([x * y for x, y in zip(v, x)])))
+            x.append(group.init(ZR,1))
+            if group.init(ZR,np.sum([x * y for x, y in zip(v, x)]))==group.init(ZR,0):
+                sk,pk,LT1 = UPCS.KeyGen(self,mpk,msk,x)
+                sk_R,pk_R,LT1 = UPCS.KeyGen(self,mpk,msk,v)
+                mpk['LT1'] = LT1
+                sigma, LT2 = UPCS.Sign(self,mpk,sk,pk_R,groupObj.random())
+                mpk['LT2'] = LT2
+                break
         return (msk, mpk)
 
 

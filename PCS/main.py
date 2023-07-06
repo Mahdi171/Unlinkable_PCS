@@ -5,6 +5,7 @@ from BG import BG
 from SPS import SPS
 from GS import GS as NIZK
 from OT12 import OT as FE
+import numpy as np
 groupObj = PairingGroup('BN254')
 
 RUN = True
@@ -29,8 +30,8 @@ class PCS():
         # Filter the dictionary to include only elements with multiple occurrences
         repeated_elements = [indices for element, indices in indices_dict.items() if len(indices) > 1]
         return repeated_elements     
-    def Setup(self,N,x,v):
-        pp = BG.Gen(self.BG)
+    def Setup(self,N):
+        pp = BG.Gen(self.BG); n = int((N-2)/4)
         CRS, tpd = NIZK.Transpatent_Setup(self.NIZK,pp)
         param, gT, g2 = FE.G_IPE(self.FE,pp,N) #OT12 pre setup
         mpk_fe, msk_fe = FE.Setup(self.FE,param,N) #OT12 main setup
@@ -39,10 +40,18 @@ class PCS():
         msk={'msk_fe': msk_fe, 'sk_pub':sk_pub,'sk_priv':sk_priv}
         mpk={'pp':pp, 'CRS':CRS, 'vk_pub':vk_pub,'vk_priv':vk_priv, 'mpk_fe':mpk_fe,\
              'g2':g2, 'gT':gT, 'N':N}
-        sk,pk = PCS.KeyGen(self,mpk,msk,x)
-        sk_R,pk_R = PCS.KeyGen(self,mpk,msk,v)
-        sigma, LT = PCS.Sign(self,mpk,sk,pk_R,groupObj.random())
-        mpk['LT'] = LT
+        while True:
+            v=[group.random() for _ in range(n-1)]
+            x=[group.random() for _ in range(n-1)]
+            p=group.order()
+            v.append(p-(np.sum([x * y for x, y in zip(v, x)])))
+            x.append(group.init(ZR,1))
+            if group.init(ZR,np.sum([x * y for x, y in zip(v, x)]))==group.init(ZR,0):
+                sk,pk = PCS.KeyGen(self,mpk,msk,x)
+                sk_R,pk_R = PCS.KeyGen(self,mpk,msk,v)
+                sigma, LT = PCS.Sign(self,mpk,sk,pk_R,group.random())
+                mpk['LT'] = LT
+                break
         return (msk, mpk)
 
     def KeyGen(self,mpk,msk,x):

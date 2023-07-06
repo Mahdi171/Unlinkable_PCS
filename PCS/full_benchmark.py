@@ -50,7 +50,7 @@ class Full_benchmark():
         setup_time=0
         for _ in range(iter):
             start_bench(groupObj)
-            (msk, mpk) = PCS.Setup(N,x,v)
+            (msk, mpk) = PCS.Setup(N)
             setup_time1, setup_pair= end_bench(groupObj)
             setup_time += setup_time1
         result.append(setup_time/iter)
