@@ -602,21 +602,19 @@ class UPCS():
         result_feR = [
             1 for j in range(N) if Sigma.SingleGPC.Verify(self.Sigma, x_feR[j], pk_R['pi_fe'][j])
         ]
-        result_zR=True
+        result_zR = True
         # To check the Zero positions in vector phi
         for j in range(N):
-            (zR[j], s, C_0) = pk_R['pi_fe'][j]
+            (zR[j], _,_) = pk_R['pi_fe'][j]
             C_PR.append(pk_R['ct'][j]/pk_R['Phi'][j])
             for i in [x for x in range(N) if x!=0 and x != n+1 and x != N-1]:
                 if zR[j][i] != group.init(0,ZR):
                     result_zR = False
-        result_CPR= [1 for j in range(N) if C_PR[j] == pk_R['C_P'][j+2]]
+        result_CPR = [1 for j in range(N) if C_PR[j] == pk_R['C_P'][j+2]]
 
         # Verification for pk_S
         ct_feS = {}
         zS = {}
-        ckS = {}
-        C_phiS = {}
         C_PS = []
         x_feS = {}
         for i in range(N):
@@ -708,8 +706,6 @@ class UPCS():
         # Verification for pk_S
         ct_feS = {}
         zS = {}
-        ckS = {}
-        C_phiS = {}
         C_PS = []
         x_feS = {}
         for i in range(N):
@@ -724,7 +720,7 @@ class UPCS():
 
         # Check zero positions in vector phi for pk_S
         for j in range(N):
-            (zS[j], s, C_0) = pk_S['pi_fe'][j]
+            (zS[j], _, _) = pk_S['pi_fe'][j]
             C_PS.append(pk_S['ct'][j] / pk_S['Phi'][j])
             for i in [x for x in range(N) if x != 0 and x != n + 1 and x != N - 1]:
                 if zS[j][i] != group.init(0, ZR):
