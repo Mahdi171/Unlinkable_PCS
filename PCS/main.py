@@ -32,8 +32,8 @@ class PCS:
     
     def Setup(self, N):
         pp = BG.Gen(self.BG)
-        n = int((N - 2) / 4)
-        CRS, tpd = NIZK.Transpatent_Setup(self.NIZK, pp)
+        n = (N - 2) // 4
+        CRS, _ = NIZK.Transpatent_Setup(self.NIZK, pp)
         param, gT, g2 = FE.G_IPE(self.FE, pp, N)  # OT12 pre setup
         mpk_fe, msk_fe = FE.Setup(self.FE, param, N)  # OT12 main setup
         sk_pub, vk_pub = DS.keygen(self.DS, pp)
@@ -52,12 +52,11 @@ class PCS:
             x.append(group.init(ZR, 1))
             
             if group.init(ZR, np.sum([x * y for x, y in zip(v, x)])) == group.init(ZR, 0):
-                sk, pk = self.KeyGen(mpk, msk, x)
-                sk_R, pk_R = self.KeyGen(mpk, msk, v)
-                sigma, LT = self.Sign(mpk, sk, pk_R, group.random())
+                sk, _ = self.KeyGen(mpk, msk, x)
+                _, pk_R = self.KeyGen(mpk, msk, v)
+                _, LT = self.Sign(mpk, sk, pk_R, group.random())
                 mpk['LT'] = LT
                 break
-        
         return msk, mpk
 
     def KeyGen(self, mpk, msk, x):
@@ -68,7 +67,7 @@ class PCS:
         mes_pub = [vk_P, ct_fe]
         sigma_pub = DS.sign(self.DS, pp, msk['sk_pub'], mes_pub)
         mes_priv = [vk_P]
-        for key, value in sk_fe.items():
+        for _, value in sk_fe.items():
             mes_priv.append(value)
         sigma_priv = SPS.sign(self.SPS, pp, msk['sk_priv'], mes_priv)
         sk = {'vk_P': vk_P, 'sk_P': sk_P, 'sk_fe': sk_fe, 'sigma_priv': sigma_priv}

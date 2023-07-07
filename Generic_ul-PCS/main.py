@@ -57,8 +57,8 @@ class UPCS():
         h = group.random(G2)
         pp_com = Com.Setup(self.Com)
 
-        CRS1, tpd1 = NIZK.Transpatent_Setup(self.NIZK, pp)
-        CRS2, tpd2 = NIZK.Transpatent_Setup(self.NIZK, pp)
+        CRS1, _ = NIZK.Transpatent_Setup(self.NIZK, pp)
+        CRS2, _ = NIZK.Transpatent_Setup(self.NIZK, pp)
 
         sk_sigA, vk_sigA = SPS.keygen(self.SPS, pp, N + 2)
         sk_seq, vk_seq = SEQ.keygen(self.SEQ, pp, N + 2)  # For POK of FE ciphertext
@@ -94,10 +94,10 @@ class UPCS():
             x.append(group.init(ZR, 1))
 
             if group.init(ZR,sum(xi * yi for xi, yi in zip(v, x))) == group.init(ZR, 0):
-                sk, pk, LT1 = UPCS.KeyGen(self, mpk, msk, x)
-                sk_R, pk_R, LT1 = UPCS.KeyGen(self, mpk, msk, v)
+                sk, _, LT1 = UPCS.KeyGen(self, mpk, msk, x)
+                _, pk_R, LT1 = UPCS.KeyGen(self, mpk, msk, v)
                 mpk['LT1'] = LT1
-                sigma, LT2 = UPCS.Sign(self, mpk, sk, pk_R, groupObj.random())
+                _, LT2 = UPCS.Sign(self, mpk, sk, pk_R, groupObj.random())
                 mpk['LT2'] = LT2
                 break
 

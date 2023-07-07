@@ -37,11 +37,9 @@ class UPCS():
         return repeated_elements
 
     def Setup(self, F):
-        Gamma1 = {}
-        Gamma2 = {}
         pp = BG.Gen(self)
-        CRS1, tpd1 = NIZK.Transpatent_Setup(self, pp)
-        CRS2, tpd2 = NIZK.Transpatent_Setup(self, pp)
+        CRS1, _ = NIZK.Transpatent_Setup(self, pp)
+        CRS2, _ = NIZK.Transpatent_Setup(self, pp)
         pp_com = Com.Setup(self)
         (sk_sigAS, vk_sigAS) = SPS.keygen(self.SPS, pp, 3)
         (sk_sigAR, vk_sigAR) = SPS.keygen(self.SPS, pp, 3)
@@ -52,10 +50,10 @@ class UPCS():
         x, v = 0, 0
         while True:
             if F['R'][x] and F['S'][v]:
-                sk, pk, LT1 = self.KeyGen(mpk, msk, x, F)
-                sk_R, pk_R, LT1 = self.KeyGen(mpk, msk, v, F)
+                sk, _, LT1 = self.KeyGen(mpk, msk, x, F)
+                _, pk_R, LT1 = self.KeyGen(mpk, msk, v, F)
                 mpk['LT1'] = LT1
-                sigma, LT2 = self.Sign(mpk, sk, pk_R, groupObj.random())
+                _, LT2 = self.Sign(mpk, sk, pk_R, groupObj.random())
                 mpk['LT2'] = LT2
                 break
             x += 1
@@ -266,7 +264,6 @@ class UPCS():
         GS_proof = {}
         GS_comX = {}
         GS_comY = {}
-        res_Bridge = []
         GS_X = []
         GS_Y = []
         GS_Ca = []
